@@ -38,7 +38,7 @@ following structure:
 {
   "ENVIRONMENT_VARIABLE": "default value",
   "ENVIRONMENT_VARIABLE_2": {
-    "required": true
+    "required": true,
     "inherit": false,
     "value": "<string>",
     "doc": "<string>"
