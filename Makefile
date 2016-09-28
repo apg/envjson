@@ -1,4 +1,4 @@
-envjson:
+envjson: main.go env.go
 	go build ./...
 
 test: envjson

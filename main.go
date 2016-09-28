@@ -61,7 +61,16 @@ func run(e env, c config) {
 }
 
 func usage() {
-	fmt.Fprintf(os.Stderr, "usage: %s [--stdin | --help] JSONfile <cmd> <cmd args>\n", os.Args[0])
+	fmt.Fprintf(os.Stderr, "usage: %s [OPTIONS]... JSONfile [COMMAND [ARG]...]\n", os.Args[0])
+	fmt.Fprintf(os.Stderr, `
+Ensure that the environment meets JSONfile requirements and run COMMAND.
+
+  -h  --help     display this help and exit
+  -i, --ignore-environment  start with an empty environment
+  -   --stdin    insert read JSON key-value pairs into environment
+
+If no COMMAND, print the resulting environment as JSON.
+`)
 }
 
 type config struct {
@@ -89,7 +98,7 @@ func configure(args []string) (c config, err error) {
 loop:
 	for ; i < len(args); i++ {
 		switch {
-		case os.Args[i] == "--help":
+		case args[i] == "--help" || args[i] == "-h":
 			c.displayHelp = true
 			return
 		case args[i] == "--stdin" || args[i] == "-":
