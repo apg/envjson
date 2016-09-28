@@ -30,10 +30,10 @@ following structure:
 {
   "ENVIRONMENT_VARIABLE": "default value",
   "ENVIRONMENT_VARIABLE_2": {
-    "required": <bool>,
-    "inherit": <bool>,
-    "default": <string>,
-    "doc": <string>
+    "required": true
+    "inherit": false,
+    "default": "<string>",
+    "doc": "<string>"
   }
 }
 ```
