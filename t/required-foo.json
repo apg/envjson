@@ -1,0 +1,6 @@
+{
+    "FOO": {
+        "inherit": true,
+        "required": true
+    }
+}
