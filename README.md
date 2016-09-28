@@ -61,6 +61,10 @@ Contributions are welcome, and encouraged! Please open an issue before
 a Pull Request to avoid duplicated effort, and/or functionality that
 will not be merged.
 
+### Thanks
+
+* [Cyril David](https://github.com/cyx) -- for brainstorming.
+
 ## Copyright
 
 (c) 2016, Andrew Gwozdziewycz <web@apgwoz.com>
