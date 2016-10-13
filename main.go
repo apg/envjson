@@ -22,19 +22,21 @@ Ensure that the environment meets JSONfile requirements and run COMMAND.
   -h  --help     display this help and exit
   -i, --ignore-environment  start with an empty environment
   -   --stdin    insert read JSON key-value pairs into environment
+  -v  --validate-json  validates envjson file
 
 If no COMMAND, print the resulting environment as JSON.
 `)
 }
 
 type config struct {
-	displayHelp bool
-	displayEnv  bool
-	fromStdin   bool
-	cleanEnv    bool
-	prog        string
-	specFile    string
-	cmd         []string
+	displayHelp  bool
+	displayEnv   bool
+	validateJSON bool
+	fromStdin    bool
+	cleanEnv     bool
+	prog         string
+	specFile     string
+	cmd          []string
 }
 
 func configure(args []string) (c config, err error) {
@@ -59,6 +61,8 @@ loop:
 			c.fromStdin = true
 		case args[i] == "-i" || args[i] == "--ignore-environment":
 			c.cleanEnv = true
+		case args[i] == "-v" || args[i] == "validate-json":
+			c.validateJSON = true
 		case strings.HasPrefix(args[i], "--") || strings.HasPrefix(args[i], "-"):
 			err = fmt.Errorf("invalid argument %q", args[i])
 			return
@@ -94,6 +98,17 @@ func main() {
 			config.prog, err)
 		usage()
 		os.Exit(1)
+	}
+
+	if config.validateJSON {
+		err := validateJSON()
+		if err != nil {
+			fmt.Fprintf(os.Stderr,
+				"%s: error: Unable to validate %q: %s\n",
+				config.prog, config.specFile, err)
+			os.Exit(1)
+		}
+		os.Exit(0)
 	}
 
 	// The config we *want* to launch command with

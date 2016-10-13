@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+var validKeys = []string{"value", "required", "inherit", "doc"}
+
 type env map[string]envValue
 
 type envValue struct {
@@ -86,13 +88,17 @@ func (c env) Merge(p env) error {
 	for k, v := range p { // Merge parent into c
 		l, ok := c[k]
 		if !ok {
-			c[k] = v // just copy it over.
+			c[k] = v // parent has something that child doesn't.
 			continue
 		}
 
 		// Overwrite our local value with the parent's value.
 		if l.Inherit {
 			l.Value = v.Value
+			l.isSet = true
+			c[k] = l
+		} else if l.Default != "" {
+			l.Value = l.Default
 			l.isSet = true
 			c[k] = l
 		}
