@@ -101,8 +101,8 @@ func main() {
 	}
 
 	if config.validateJSON {
-		err := validateJSON()
-		if err != nil {
+		ok, err := validateJSON(config.specFile)
+		if !ok {
 			fmt.Fprintf(os.Stderr,
 				"%s: error: Unable to validate %q: %s\n",
 				config.prog, config.specFile, err)
