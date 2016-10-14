@@ -8,8 +8,6 @@ import (
 	"strings"
 )
 
-var validKeys = []string{"value", "required", "inherit", "doc"}
-
 type env map[string]envValue
 
 type envValue struct {
@@ -66,6 +64,7 @@ func (c env) FromFile(f string) error {
 	if err != nil {
 		return err
 	}
+	defer in.Close()
 
 	return c.Read(in)
 }
@@ -97,8 +96,8 @@ func (c env) Merge(p env) error {
 			l.Value = v.Value
 			l.isSet = true
 			c[k] = l
-		} else if l.Default != "" {
-			l.Value = l.Default
+		} else if l.Value != "" {
+			l.Value = l.Value
 			l.isSet = true
 			c[k] = l
 		}
@@ -130,4 +129,52 @@ func (c env) Dump(w io.Writer) error {
 
 	enc := json.NewEncoder(w)
 	return enc.Encode(values)
+}
+
+var validKeys = []string{"value", "required", "inherit", "doc"}
+
+func validateJSON(f string) (bool, error) {
+	var result map[string]interface{}
+
+	in, err := os.Open(f)
+	if err != nil {
+		return false, err
+	}
+	defer in.Close()
+
+	dec := json.NewDecoder(in)
+	err = dec.Decode(&result)
+	if err != nil {
+		return false, err
+	}
+
+	for name, v := range result {
+		switch v.(type) {
+		case string:
+			continue
+		case map[string]interface{}:
+			m := v.(map[string]interface{})
+			for k, v := range m {
+				switch k {
+				case "value", "doc":
+					if _, ok := v.(string); !ok {
+						return false, fmt.Errorf(
+							"%s should be of type string, got %T.", k, v)
+					}
+				case "required", "inherit":
+					if _, ok := v.(bool); !ok {
+						return false, fmt.Errorf(
+							"%s should be of type string, got %T.", k, v)
+					}
+				default:
+					return false, fmt.Errorf(
+						"%q is not a valid key in value spec.", k)
+				}
+			}
+		default:
+			return false, fmt.Errorf(
+				"Top level var %q must be string or value spec.", name)
+		}
+	}
+	return true, nil
 }
