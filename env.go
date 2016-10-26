@@ -17,6 +17,7 @@ type envValue struct {
 	Doc      string
 
 	isSet bool
+	inSpec bool
 }
 
 func (c *envValue) UnmarshalJSON(b []byte) error {
@@ -46,6 +47,7 @@ func (c *envValue) UnmarshalJSON(b []byte) error {
 	c.Required = target.Required
 	c.Inherit = target.Inherit
 	c.Doc = target.Doc
+	c.inSpec = true
 
 	return nil
 }
@@ -129,6 +131,26 @@ func (c env) Dump(w io.Writer) error {
 
 	enc := json.NewEncoder(w)
 	return enc.Encode(values)
+}
+
+func (c env) DumpDocs(w io.Writer) error {
+	for k, ev := range c {
+		if ev.inSpec {
+			var optional []string
+			if ev.Required {
+				optional = append(optional, "required")
+			}
+			if ev.Inherit {
+				optional = append(optional, "inherited")
+			}
+			if len(optional) > 0 {
+				fmt.Fprintf(w, "%s (%s): %s\n", k, strings.Join(optional, ", "), ev.Doc)
+			} else {
+				fmt.Fprintf(w, "%s: %s\n", k, ev.Doc)
+			}
+		}
+	}
+	return nil
 }
 
 var validKeys = []string{"value", "required", "inherit", "doc"}

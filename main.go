@@ -31,6 +31,7 @@ If no COMMAND, print the resulting environment as JSON.
 type config struct {
 	displayHelp  bool
 	displayEnv   bool
+	displayDocs  bool	
 	validateJSON bool
 	fromStdin    bool
 	cleanEnv     bool
@@ -61,12 +62,15 @@ loop:
 			c.fromStdin = true
 		case args[i] == "-i" || args[i] == "--ignore-environment":
 			c.cleanEnv = true
-		case args[i] == "-v" || args[i] == "validate-json":
+		case args[i] == "-v" || args[i] == "--validate-json":
 			c.validateJSON = true
+		case args[i] == "-d" || args[i] == "--display-docs":
+			c.displayDocs = true
 		case strings.HasPrefix(args[i], "--") || strings.HasPrefix(args[i], "-"):
 			err = fmt.Errorf("invalid argument %q", args[i])
 			return
 		default:
+			c.displayEnv = true
 			break loop
 		}
 	}
@@ -77,13 +81,9 @@ loop:
 		i++
 		if i < len(args) {
 			c.cmd = args[i:]
-		} else {
-			c.displayEnv = true
+			c.displayEnv = false
 		}
-	} else {
-		c.displayEnv = true
 	}
-
 	return
 }
 
@@ -151,7 +151,16 @@ func main() {
 	}
 
 	// We're just dumping to the screen.
-	if config.displayEnv {
+	if config.displayDocs {
+		err = local.DumpDocs(os.Stdout)
+		if err != nil {
+			fmt.Fprintf(os.Stderr,
+				"%s: error: Unable to display docs: %s\n",
+				config.prog, err)
+			os.Exit(1)
+		}
+		return
+	} else if config.displayEnv {
 		err = local.Dump(os.Stdout)
 		if err != nil {
 			fmt.Fprintf(os.Stderr,
