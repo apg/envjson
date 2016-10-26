@@ -1,6 +1,7 @@
 {
     "FOO": {
         "inherit": true,
-        "required": true
+        "required": true,
+        "doc": "foo bar, baz"
     }
 }
