@@ -141,6 +141,18 @@ func main() {
 				config.prog, config.specFile, err)
 			os.Exit(1)
 		}
+
+		// We're just dumping to the screen.
+		if config.displayDocs {
+			err = local.DumpDocs(os.Stdout)
+			if err != nil {
+				fmt.Fprintf(os.Stderr,
+					"%s: error: Unable to display docs: %s\n",
+					config.prog, err)
+				os.Exit(1)
+			}
+			return
+		}
 	}
 
 	// Validate that we have what we need.
@@ -151,17 +163,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	// We're just dumping to the screen.
-	if config.displayDocs {
-		err = local.DumpDocs(os.Stdout)
-		if err != nil {
-			fmt.Fprintf(os.Stderr,
-				"%s: error: Unable to display docs: %s\n",
-				config.prog, err)
-			os.Exit(1)
-		}
-		return
-	} else if config.displayEnv {
+	if config.displayEnv {
 		err = local.Dump(os.Stdout)
 		if err != nil {
 			fmt.Fprintf(os.Stderr,
