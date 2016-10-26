@@ -19,10 +19,11 @@ func usage() {
 	fmt.Fprintf(os.Stderr, `
 Ensure that the environment meets JSONfile requirements and run COMMAND.
 
-  -h  --help     display this help and exit
+  -d, --display-docs  displays documentation for variables in spec
+  -h, --help     display this help and exit
   -i, --ignore-environment  start with an empty environment
-  -   --stdin    insert read JSON key-value pairs into environment
-  -v  --validate-json  validates envjson file
+  -,  --stdin    insert read JSON key-value pairs into environment
+  -v, --validate-json  validates envjson file
 
 If no COMMAND, print the resulting environment as JSON.
 `)

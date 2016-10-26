@@ -9,10 +9,11 @@ usage: ./envjson [OPTIONS]... JSONfile [COMMAND [ARG]...]
 
 Ensure that the environment meets JSONfile requirements and run COMMAND.
 
+  -d, --display-docs  displays documentation for variables in spec
+  -h, --help     display this help and exit
   -i, --ignore-environment  start with an empty environment
-      --help     display this help and exit
-  -   --stdin    insert read JSON key-value pairs into environment
-  -v  --validate-json  validates envjson file
+  -,  --stdin    insert read JSON key-value pairs into environment
+  -v, --validate-json  validates envjson file
 
 If no COMMAND, print the resulting environment as JSON.
 ```
